@@ -1,0 +1,90 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.controls label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    text-align: left;
+}
+
+.controls input[type="text"] {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    width: calc(100% - 24px); /* Account for padding */
+}
+
+.controls button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+    background-color: #0056b3;
+}
+
+.call-status {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+.call-status h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #495057;
+}
+
+#statusMessage {
+    font-size: 16px;
+    color: #333;
+    min-height: 24px; /* Ensure space even when empty */
+}
+
+#remoteAudio {
+    display: block; 
+    margin-top: 15px;
+    width: 100%;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breesy Telnyx Outbound Caller</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Breesy Telnyx Outbound Caller</h1>
+        <div class="controls">
+            <label for="destination">Destination Number to Call (use +1 for US country code)</label>
+            <input type="text" id="destination" placeholder="e.g., +15551234567 or sip:agent@sip.telnyx.com">
+            <button id="callButton">Call</button>
+        </div>
+        <div class="call-status">
+            <h2>Call Status</h2>
+            <p id="statusMessage">Idle</p>
+        </div>
+        <div class="audio-controls">
+            <!-- The Telnyx SDK will attach the remote audio stream to this element -->
+            <audio id="remoteAudio" autoplay></audio>
+        </div>
+    </div>
+
+    <!-- Telnyx WebRTC SDK is now imported as a module in script.js -->
+    <!-- Our custom JavaScript file, loaded as a module -->
+    <script type="module" src="script.js"></script> 
+</body>
+</html>
