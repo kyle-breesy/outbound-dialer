@@ -1,0 +1,13 @@
+{
+    "name": "outbound-caller",
+    "version": "1.0.0",
+    "description": "A simple Telnyx WebRTC caller",
+    "main": "script.js",
+    "scripts": {
+      "dev": "npx http-server -c-1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {}
+  }
+  
