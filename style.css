@@ -1,90 +1,194 @@
+:root {
+    --bg-color: #0f1115;
+    --card-bg: #1c1f26;
+    --text-primary: #ffffff;
+    --text-secondary: #9ca3af;
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --success-color: #10b981;
+    --border-color: #2d3748;
+    --input-bg: #111318;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 body {
-    font-family: sans-serif;
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
-.container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.app-container {
+    background-color: var(--card-bg);
     width: 100%;
-    max-width: 500px;
-}
-
-h1 {
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.controls {
-    margin-bottom: 25px;
+    max-width: 400px;
+    height: 600px;
+    max-height: 90vh;
+    border-radius: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
-.controls label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
-    text-align: left;
+header {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.controls input[type="text"] {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    margin-bottom: 15px;
-    width: calc(100% - 24px); /* Account for padding */
+.logo {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
 }
 
-.controls button {
-    padding: 12px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
+.connection-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--text-secondary); /* Default/Offline */
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
     transition: background-color 0.3s ease;
 }
 
-.controls button:hover {
-    background-color: #0056b3;
+.connection-indicator.connected {
+    background-color: var(--success-color);
+    box-shadow: 0 0 8px var(--success-color);
 }
 
-.call-status {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #e9ecef;
-    border-radius: 4px;
+.connection-indicator.error {
+    background-color: var(--danger-color);
 }
 
-.call-status h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #495057;
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 24px;
 }
 
-#statusMessage {
-    font-size: 16px;
-    color: #333;
-    min-height: 24px; /* Ensure space even when empty */
+.dialer-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-#remoteAudio {
-    display: block; 
-    margin-top: 15px;
+.display-area {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+input[type="tel"], input[type="text"] {
     width: 100%;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 24px;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    font-weight: 600;
+    text-align: center;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="tel"]:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+input::placeholder {
+    color: #4b5563;
+    font-weight: 400;
+}
+
+.status-message {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    min-height: 20px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.actions-area {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+
+.call-btn {
+    width: 100%;
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.call-btn:hover {
+    background-color: #059669; /* Darker green */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
+}
+
+.call-btn:active {
+    transform: translateY(0);
+}
+
+.call-btn.hangup {
+    background-color: var(--danger-color);
+}
+
+.call-btn.hangup:hover {
+    background-color: var(--danger-hover);
+}
+
+.icon {
+    font-size: 20px;
+}
+
+/* Media query for mobile */
+@media (max-width: 480px) {
+    .app-container {
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+    }
 }

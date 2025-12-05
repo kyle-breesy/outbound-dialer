@@ -3,30 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breesy Twilio Outbound Caller</title>
+    <title>Breesy Outbound</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Breesy Twilio Outbound Caller</h1>
-        <div class="controls">
-            <label for="destination">Destination Number to Call (use +1 for US country code)</label>
-            <input type="text" id="destination" placeholder="e.g., +15551234567">
-            <button id="callButton">Call</button>
-        </div>
-        <div class="call-status">
-            <h2>Call Status</h2>
-            <p id="statusMessage">Idle</p>
-        </div>
-        <div class="audio-controls">
-            <!-- Audio is handled by Twilio SDK automatically -->
-            <audio id="remoteAudio" autoplay></audio>
-        </div>
+    <div class="app-container">
+        <header>
+            <div class="logo">Breesy</div>
+            <div class="connection-indicator" id="connectionStatus" title="Device Status"></div>
+        </header>
+        
+        <main>
+            <div class="dialer-container">
+                <div class="display-area">
+                    <label for="destination">Enter Number</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="destination" placeholder="+1 (555) 000-0000" autocomplete="off">
+                    </div>
+                    <div id="statusMessage" class="status-message">Ready to call</div>
+                </div>
+
+                <div class="actions-area">
+                    <button id="callButton" class="call-btn">
+                        <span class="icon">📞</span>
+                        <span class="text">Call</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Audio elements managed by Twilio SDK -->
+        <audio id="remoteAudio" autoplay></audio>
     </div>
 
     <!-- Twilio Voice SDK 2.x from unpkg -->
     <script src="https://unpkg.com/@twilio/voice-sdk@2.10.2/dist/twilio.min.js"></script>
-    <!-- Our custom JavaScript file -->
+    <!-- Custom Script -->
     <script src="script.js"></script> 
 </body>
 </html>

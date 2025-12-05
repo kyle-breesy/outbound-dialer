@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const callButton = document.getElementById('callButton');
     const destinationInput = document.getElementById('destination');
     const statusMessage = document.getElementById('statusMessage');
+    const connectionStatus = document.getElementById('connectionStatus');
+
+    const callBtnText = callButton.querySelector('.text');
+    const callBtnIcon = callButton.querySelector('.icon');
 
     let device = null;
     let activeCall = null;
@@ -14,7 +18,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const SUPABASE_URL = 'https://jfjvrpnvhdcvmzmkyxnu.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmanZycG52aGRjdm16bWt5eG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwMjMyNDQsImV4cCI6MjA2MTU5OTI0NH0.1qL2NXWBPuxz49R9jHLWoZdAz06M8t9SGOGdtlkVcvI';
 
-    statusMessage.textContent = 'Initializing...';
+    function updateStatus(message) {
+        statusMessage.textContent = message;
+    }
+
+    function updateConnectionStatus(status) {
+        connectionStatus.className = 'connection-indicator ' + status;
+    }
+
+    function setButtonState(state) {
+        if (state === 'call') {
+            callBtnText.textContent = 'Call';
+            callBtnIcon.textContent = '📞';
+            callButton.classList.remove('hangup');
+        } else if (state === 'hangup') {
+            callBtnText.textContent = 'End Call';
+            callBtnIcon.textContent = '❌';
+            callButton.classList.add('hangup');
+        }
+    }
+
+    updateStatus('Initializing...');
 
     async function getAccessToken() {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/twilio-voice-token`, {
@@ -38,21 +62,23 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Check for Twilio Voice SDK 2.x
             if (typeof Twilio === 'undefined') {
-                statusMessage.textContent = 'Error: Twilio SDK not loaded. Check console.';
+                updateStatus('Error: Twilio SDK not loaded.');
                 console.error('Twilio is not defined. SDK might not have loaded.');
+                updateConnectionStatus('error');
                 return;
             }
 
             // SDK 2.x uses Twilio.Device directly as a constructor
             const DeviceClass = Twilio.Device;
             if (!DeviceClass) {
-                statusMessage.textContent = 'Error: Twilio.Device not found. Check console.';
+                updateStatus('Error: Twilio.Device not found.');
                 console.error('Twilio.Device is not defined.');
+                updateConnectionStatus('error');
                 return;
             }
 
             console.log('Twilio SDK 2.x found. Fetching access token...');
-            statusMessage.textContent = 'Fetching access token...';
+            updateStatus('Connecting...');
 
             const token = await getAccessToken();
             console.log('Access token received. Initializing device...');
@@ -64,18 +90,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             device.on('registered', () => {
-                statusMessage.textContent = 'Ready. Enter destination and click call.';
+                updateStatus('Ready to call');
                 console.log('Twilio device registered and ready.');
+                updateConnectionStatus('connected');
             });
 
             device.on('error', (error) => {
                 const errorMsg = error.message || error.code || 'Unknown error';
-                statusMessage.textContent = `Device Error: ${errorMsg}. Check console.`;
+                updateStatus(`Device Error: ${errorMsg}`);
                 console.error('Twilio device error - code:', error.code);
                 console.error('Twilio device error - message:', error.message);
                 console.error('Twilio device error - full:', error);
                 activeCall = null;
-                callButton.textContent = 'Call';
+                setButtonState('call');
+                updateConnectionStatus('error');
             });
 
             device.on('tokenWillExpire', async () => {
@@ -89,53 +117,54 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Device registration initiated.');
 
         } catch (error) {
-            statusMessage.textContent = `Initialization failed: ${error.message}. Check console.`;
+            updateStatus(`Initialization failed`);
             console.error('Error initializing Twilio Device:', error);
+            updateConnectionStatus('error');
         }
     }
 
     function attachCallHandlers(call) {
         call.on('accept', () => {
-            statusMessage.textContent = 'Call connected!';
-            callButton.textContent = 'Hang Up';
+            updateStatus('Call connected');
+            setButtonState('hangup');
             console.log('Call accepted/connected.');
         });
 
         call.on('disconnect', () => {
-            statusMessage.textContent = 'Call ended.';
+            updateStatus('Call ended');
             activeCall = null;
-            callButton.textContent = 'Call';
+            setButtonState('call');
             console.log('Call disconnected.');
             setTimeout(() => {
                 if (!activeCall) {
-                    statusMessage.textContent = 'Ready. Enter destination and click call.';
+                    updateStatus('Ready to call');
                 }
             }, 2000);
         });
 
         call.on('cancel', () => {
-            statusMessage.textContent = 'Call cancelled.';
+            updateStatus('Call cancelled');
             activeCall = null;
-            callButton.textContent = 'Call';
+            setButtonState('call');
             console.log('Call cancelled.');
         });
 
         call.on('reject', () => {
-            statusMessage.textContent = 'Call rejected.';
+            updateStatus('Call rejected');
             activeCall = null;
-            callButton.textContent = 'Call';
+            setButtonState('call');
             console.log('Call rejected.');
         });
 
         call.on('error', (error) => {
-            statusMessage.textContent = `Call Error: ${error.message}`;
+            updateStatus(`Call Error: ${error.message}`);
             console.error('Call error:', error);
             activeCall = null;
-            callButton.textContent = 'Call';
+            setButtonState('call');
         });
 
         call.on('ringing', (hasEarlyMedia) => {
-            statusMessage.textContent = 'Ringing...';
+            updateStatus('Ringing...');
             console.log('Call is ringing. Has early media:', hasEarlyMedia);
         });
     }
@@ -143,26 +172,27 @@ document.addEventListener('DOMContentLoaded', () => {
     callButton.addEventListener('click', async () => {
         if (activeCall) {
             console.log('Hangup button clicked. Disconnecting call...');
-            statusMessage.textContent = 'Hanging up...';
+            updateStatus('Hanging up...');
             activeCall.disconnect();
             return;
         }
 
         const destination = destinationInput.value.trim();
         if (!destination) {
-            alert('Please enter a destination phone number.');
+            updateStatus('Please enter a number');
+            destinationInput.focus();
             return;
         }
 
         if (!device) {
-            statusMessage.textContent = 'Twilio device not initialized. Please wait or refresh.';
+            updateStatus('Device not ready');
             console.error('Twilio device not ready.');
             return;
         }
 
-        statusMessage.textContent = `Dialing ${destination}...`;
+        updateStatus(`Dialing ${destination}...`);
         console.log(`Attempting to call: ${destination}`);
-        callButton.textContent = 'Hang Up';
+        setButtonState('hangup');
 
         try {
             // Make outbound call with SDK 2.x
@@ -176,11 +206,21 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Call initiated:', activeCall);
 
         } catch (error) {
-            statusMessage.textContent = `Failed to initiate call: ${error.message}. Check console.`;
+            updateStatus(`Call failed: ${error.message}`);
             console.error('Error initiating call:', error);
             activeCall = null;
-            callButton.textContent = 'Call';
+            setButtonState('call');
         }
+    });
+
+    // Auto-format phone number input (simple version)
+    destinationInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 0 && !value.startsWith('1')) {
+             // If user doesn't type country code, we can assume US for this demo, 
+             // but let's just let them type freely for now or prepend + if missing.
+        }
+        // Simple visual feedback or formatting could go here
     });
 
     initializeTwilioDevice();
